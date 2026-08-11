@@ -61,7 +61,7 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",   # your frontend dev URL
+    "http://localhost:8080",   # your frontend dev URL
 ]
 
 ROOT_URLCONF = 'StudentTracker.urls'
@@ -150,3 +150,9 @@ SPECTACULAR_SETTINGS = {
     "DESCRIPTION": "Attendance, behavior logging, and bathroom-break tracking for teachers.",
     "VERSION": "1.0.0",
 }
+
+# for signing in with Supabase JWTs
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_ANON_KEY = os.getenv("SUPABASE_ANON_KEY")
+SUPABASE_JWT_SECRET = os.getenv("SUPABASE_JWT_SECRET")
+SUPABASE_JWKS_URL = f"{SUPABASE_URL}/auth/v1/.well-known/jwks.json"
