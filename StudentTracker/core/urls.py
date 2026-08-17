@@ -16,6 +16,8 @@ from .views import (
     BathroomStopView,
     SessionReportView,
     StudentBehaviorSummaryView,
+    GetAllOfUsersView,
+    GetAllOfTeachersView,
     CreateUserView,
     SignInView,
     MeView,
@@ -52,4 +54,7 @@ urlpatterns = [
         name="student-behavior-summary",
     ),
     path("users/create/", CreateUserView.as_view(), name="create-user"),
+    path("users/", GetAllOfUsersView.as_view(), name="get-list-of-users"),
+    path("teachers/", GetAllOfTeachersView.as_view(),
+         name="get-list-of-teachers"),
 ]
