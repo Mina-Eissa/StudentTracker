@@ -27,6 +27,7 @@ class GetAllOfUsersView(APIView):
             user_list = [
                 {
                     "id": str(user.id),
+                    "full_name": f"{user.first_name} {user.middle_name} {user.last_name}",
                     "email": user.email,
                     "first_name": user.first_name,
                     "middle_name": user.middle_name,

@@ -32,7 +32,7 @@ router.register("students", StudentViewSet, basename="student")
 router.register("sessions", SessionViewSet, basename="session")
 router.register("attendance", AttendanceViewSet, basename="attendance")
 router.register("bathroom-logs", BathroomLogViewSet, basename="bathroom-log")
-router.register("behaviors", BehaviorViewSet, basename="behavior")
+router.register("behavior-tags", BehaviorViewSet, basename="behavior-tag")
 router.register("behavior-events", SessionStudentBehaviorViewSet,
                 basename="behavior-event")
 

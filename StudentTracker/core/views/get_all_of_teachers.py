@@ -22,6 +22,7 @@ class GetAllOfTeachersView(APIView):
                 {
                     "id": str(teacher.id),
                     "email": teacher.email,
+                    "full_name": f"{teacher.first_name} {teacher.middle_name} {teacher.last_name}",
                     "first_name": teacher.first_name,
                     "middle_name": teacher.middle_name,
                     "last_name": teacher.last_name,
