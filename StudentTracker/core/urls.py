@@ -20,6 +20,7 @@ from .views import (
     GetAllOfTeachersView,
     CreateUserView,
     SignInView,
+    LogoutView,
     MeView,
 )
 
@@ -39,9 +40,10 @@ router.register("behavior-events", SessionStudentBehaviorViewSet,
 urlpatterns = [
     path("", include(router.urls)),
 
-    # --- auth: signin / signup / me ---
+    # --- auth: signin / signup / me / logout ---
     path("auth/signin/", SignInView.as_view(), name="signin"),
     path("auth/me/", MeView.as_view(), name="me"),
+    path("auth/logout/", LogoutView.as_view(), name="logout"),
 
     # --- business-logic endpoints, not covered by plain CRUD ---
     path("bathroom/start/", BathroomStartView.as_view(), name="bathroom-start"),
