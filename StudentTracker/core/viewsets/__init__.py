@@ -6,6 +6,8 @@ from .attendance import AttendanceViewSet
 from .bathroom_log import BathroomLogViewSet
 from .behavior import BehaviorViewSet
 from .session_student_behavior import SessionStudentBehaviorViewSet
+from .event_log import EventLogViewSet
+
 
 __all__ = [
     "GradeViewSet",
@@ -16,4 +18,5 @@ __all__ = [
     "BathroomLogViewSet",
     "BehaviorViewSet",
     "SessionStudentBehaviorViewSet",
+    "EventLogViewSet",
 ]

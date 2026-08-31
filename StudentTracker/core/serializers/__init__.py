@@ -7,6 +7,7 @@ from .attendance import AttendanceSerializer
 from .bathroom_log import BathroomLogSerializer
 from .behavior import BehaviorSerializer
 from .session_student_behavior import SessionStudentBehaviorSerializer
+from .event_log import EventLogSerializer
 
 __all__ = [
     "AppUserSerializer",
@@ -18,4 +19,5 @@ __all__ = [
     "BathroomLogSerializer",
     "BehaviorSerializer",
     "SessionStudentBehaviorSerializer",
+    "EventLogSerializer"
 ]

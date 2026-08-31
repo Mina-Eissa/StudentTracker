@@ -7,6 +7,8 @@ from .signin import SignInView
 from .get_all_of_users import GetAllOfUsersView
 from .get_all_of_teachers import GetAllOfTeachersView
 from .logout import LogoutView
+from .session_end import EndSessionView
+from .session_start import StartSessionView
 __all__ = [
     "BathroomStartView",
     "BathroomStopView",
@@ -18,4 +20,6 @@ __all__ = [
     "MeView",
     "SignInView",
     "LogoutView",
+    "EndSessionView",
+    "StartSessionView",
 ]

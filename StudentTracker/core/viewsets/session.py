@@ -3,6 +3,7 @@ from rest_framework.exceptions import PermissionDenied
 
 from ..models import Session
 from ..serializers import SessionSerializer
+from ..signals import session_set
 
 
 class SessionViewSet(viewsets.ModelViewSet):
@@ -16,10 +17,11 @@ class SessionViewSet(viewsets.ModelViewSet):
         return Session.objects.filter(teacher_id=user.id)
 
     def perform_create(self, serializer):
-        # default the session's teacher to whoever is creating it, unless an
-        # admin explicitly assigns a different teacher in the payload
         teacher_id = self.request.data.get("teacher") or self.request.user.id
-        serializer.save(creator_id=self.request.user.id, teacher_id=teacher_id)
+        session = serializer.save(
+            creator_id=self.request.user.id, teacher_id=teacher_id)
+        session_set.send(sender=Session, session=session,
+                         triggered_by=self.request.user)
 
     def perform_update(self, serializer):
         session = self.get_object()

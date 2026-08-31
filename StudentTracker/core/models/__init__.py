@@ -7,6 +7,7 @@ from .attendance import Attendance
 from .bathroom_log import BathroomLog
 from .behavior import Behavior
 from .session_student_behavior import SessionStudentBehavior
+from .event_log import EventLog
 
 __all__ = [
     "AppUser",
@@ -18,4 +19,5 @@ __all__ = [
     "BathroomLog",
     "Behavior",
     "SessionStudentBehavior",
+    "EventLog"
 ]

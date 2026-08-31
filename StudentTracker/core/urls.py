@@ -10,11 +10,14 @@ from .viewsets import (
     BathroomLogViewSet,
     BehaviorViewSet,
     SessionStudentBehaviorViewSet,
+    EventLogViewSet
 )
 from .views import (
     BathroomStartView,
     BathroomStopView,
     SessionReportView,
+    StartSessionView,
+    EndSessionView,
     StudentBehaviorSummaryView,
     GetAllOfUsersView,
     GetAllOfTeachersView,
@@ -36,7 +39,7 @@ router.register("bathroom-logs", BathroomLogViewSet, basename="bathroom-log")
 router.register("behavior-tags", BehaviorViewSet, basename="behavior-tag")
 router.register("behavior-events", SessionStudentBehaviorViewSet,
                 basename="behavior-event")
-
+router.register("event-logs", EventLogViewSet, basename="event-log")
 urlpatterns = [
     path("", include(router.urls)),
 
@@ -48,6 +51,10 @@ urlpatterns = [
     # --- business-logic endpoints, not covered by plain CRUD ---
     path("bathroom/start/", BathroomStartView.as_view(), name="bathroom-start"),
     path("bathroom/stop/", BathroomStopView.as_view(), name="bathroom-stop"),
+    path("sessions/<uuid:session_id>/start/",
+         StartSessionView.as_view(), name="session-start"),
+    path("sessions/<uuid:session_id>/end/",
+         EndSessionView.as_view(), name="session-end"),
     path("sessions/<uuid:session_id>/report/",
          SessionReportView.as_view(), name="session-report"),
     path(
