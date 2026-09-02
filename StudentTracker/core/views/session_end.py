@@ -1,7 +1,7 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from ..models import Session
+from ..models import Session, SessionStatus
 from ..signals import session_ended
 
 
@@ -14,16 +14,18 @@ class EndSessionView(APIView):
     """
 
     def post(self, request, session_id):
-        session = Session.objects.filter(id=session_id, teacher_id=request.user.id).first()
+        session = Session.objects.filter(
+            id=session_id, teacher_id=request.user.id).first()
         if not session:
             return Response({"detail": "Session not found or not yours."}, status=404)
 
-        if session.status == "finished":
+        if session.status == SessionStatus.FINISHED:
             return Response({"detail": "Session is already finished."}, status=409)
 
-        session.status = "finished"
+        session.status = SessionStatus.FINISHED
         session.save(update_fields=["status"])
 
-        session_ended.send(sender=Session, session=session, triggered_by=request.user)
+        session_ended.send(sender=Session, session=session,
+                           triggered_by=request.user)
 
-        return Response({"status": "finished"})
+        return Response({"status": "Finished"})

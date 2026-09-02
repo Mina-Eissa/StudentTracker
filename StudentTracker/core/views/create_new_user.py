@@ -5,7 +5,7 @@ from django.conf import settings
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
+from django.db import IntegrityError, transaction
 from ..models import AppUser
 from ..permissions import IsAdmin
 
@@ -66,15 +66,16 @@ class CreateUserView(APIView):
 
         # create the matching profile row
         try:
-            AppUser.objects.create(
-                id=auth_user_id,
-                first_name=first_name,
-                middle_name=middle_name or None,
-                last_name=last_name,
-                email=email,
-                role=role,
-            )
-        except Exception as e:
+            with transaction.atomic():
+                AppUser.objects.create(
+                    id=auth_user_id,
+                    first_name=first_name,
+                    middle_name=middle_name or None,
+                    last_name=last_name,
+                    email=email,
+                    role=role,
+                )
+        except IntegrityError as e:
             # roll back the auth user so we don't leave an orphaned account
             requests.delete(
                 f"{settings.SUPABASE_URL}/auth/v1/admin/users/{auth_user_id}",

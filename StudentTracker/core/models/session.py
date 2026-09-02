@@ -3,10 +3,21 @@ import uuid
 from django.db import models
 
 
+class SessionStatus(models.TextChoices):
+    PENDING = "Pending", "Pending"
+    RUNNING = "Running", "Running"
+    FINISHED = "Finished", "Finished"
+
+
 class Session(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4)
     title = models.CharField(max_length=256)
     start_at = models.DateTimeField()
+    status = models.CharField(
+        max_length=20,
+        choices=SessionStatus.choices,
+        default=SessionStatus.PENDING,
+    )
     duration = models.IntegerField(help_text="minutes")
     created_at = models.DateTimeField(auto_now_add=True)
     creator = models.ForeignKey(

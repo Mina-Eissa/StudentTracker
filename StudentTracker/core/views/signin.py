@@ -53,7 +53,7 @@ class SignInView(APIView):
 
         return Response(
             {
-                "token": data.get("access_token"),
+                "access_token": data.get("access_token"),
                 "refresh_token": data.get("refresh_token"),
                 "expires_in": data.get("expires_in"),
                 "user": AppUserSerializer(profile).data,

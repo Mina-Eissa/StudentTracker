@@ -15,6 +15,7 @@ from .viewsets import (
 from .views import (
     BathroomStartView,
     BathroomStopView,
+    BathroomLogsForStudentView,
     SessionReportView,
     StartSessionView,
     EndSessionView,
@@ -51,6 +52,8 @@ urlpatterns = [
     # --- business-logic endpoints, not covered by plain CRUD ---
     path("bathroom/start/", BathroomStartView.as_view(), name="bathroom-start"),
     path("bathroom/stop/", BathroomStopView.as_view(), name="bathroom-stop"),
+    path("bathroom-logs/<uuid:student_id>/",
+         BathroomLogsForStudentView.as_view(), name="bathroom-logs-for-student"),
     path("sessions/<uuid:session_id>/start/",
          StartSessionView.as_view(), name="session-start"),
     path("sessions/<uuid:session_id>/end/",

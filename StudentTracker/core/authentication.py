@@ -26,7 +26,6 @@ class SupabaseAuthentication(BaseAuthentication):
             raise AuthenticationFailed("Empty bearer token.")
 
         try:
-            # Get Supabase public signing key using the token's `kid`
             jwks_client = PyJWKClient(
                 settings.SUPABASE_JWKS_URL
             )
@@ -50,10 +49,11 @@ class SupabaseAuthentication(BaseAuthentication):
         except jwt.InvalidIssuerError:
             raise AuthenticationFailed("Invalid token issuer.")
 
+        except jwt.PyJWKError as e:
+            raise AuthenticationFailed(f"Invalid signing key: {e}")
+
         except jwt.PyJWTError as e:
-            raise AuthenticationFailed(
-                f"Invalid token: {e}"
-            )
+            raise AuthenticationFailed(f"Invalid token: {e}")
 
         user_id = payload.get("sub")
 
@@ -64,10 +64,12 @@ class SupabaseAuthentication(BaseAuthentication):
 
         try:
             user = AppUser.objects.get(id=user_id)
-
         except AppUser.DoesNotExist:
             raise AuthenticationFailed(
                 "No matching AppUser for this token."
             )
 
         return (user, token)
+
+    def authenticate_header(self, request):
+        return self.keyword
