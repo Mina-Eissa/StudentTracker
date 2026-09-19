@@ -17,3 +17,9 @@ class Student(models.Model):
 
     def __str__(self):
         return f"{self.first_name} {self.last_name} ({self.school_id})"
+
+    @property
+    def full_name(self):
+        if self.middle_name:
+            return f"{self.first_name} {self.middle_name} {self.last_name}"
+        return f"{self.first_name} {self.last_name}"

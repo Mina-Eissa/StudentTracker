@@ -14,8 +14,11 @@ class TeacherGrade(models.Model):
         "core.Grade", on_delete=models.CASCADE, db_column="grade_id", related_name="teacher_grades"
     )
     assigned_at = models.DateTimeField(auto_now_add=True)
+    academic_year = models.ForeignKey(
+        "core.AcademicYear", on_delete=models.CASCADE, db_column="academic_year_id", related_name="teacher_grades"
+    )
 
     class Meta:
         db_table = "teacher_grade"
         managed = False
-        unique_together = (("teacher", "grade"),)
+        unique_together = (("teacher", "grade", "academic_year"),)

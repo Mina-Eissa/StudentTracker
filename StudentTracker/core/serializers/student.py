@@ -6,4 +6,5 @@ from ..models import Student
 class StudentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Student
-        fields = ["id", "first_name", "middle_name", "last_name", "school_id", "created_at"]
+        fields = ["id", "full_name", "first_name", "middle_name",
+                  "last_name", "school_id", "created_at"]

@@ -1,7 +1,7 @@
 from rest_framework import viewsets, permissions
-from rest_framework.exceptions import PermissionDenied
+from rest_framework.exceptions import PermissionDenied, ValidationError
 
-from ..models import Session
+from core.models import Session, AppUser, AcademicYear, Subject, Grade
 from ..serializers import SessionSerializer
 from ..signals import session_set
 
@@ -17,11 +17,28 @@ class SessionViewSet(viewsets.ModelViewSet):
         return Session.objects.filter(teacher_id=user.id)
 
     def perform_create(self, serializer):
-        teacher_id = self.request.data.get("teacher") or self.request.user.id
+        user = AppUser.objects.get(id=self.request.user.id)
+        teacher = serializer.validated_data.get("teacher") or user
+
+        if teacher.role != "Teacher":
+            raise PermissionDenied("The specified user is not a teacher.")
+
+        if teacher.pk != user.pk and user.role != "Admin":
+            raise PermissionDenied(
+                "Only Admin users can create sessions for other teachers."
+            )
+
+        academic_year = AcademicYear.objects.filter(current=True).first()
+        if academic_year is None:
+            raise ValidationError(
+                {"academic_year": "No active academic year is set."})
+
         session = serializer.save(
-            creator_id=self.request.user.id, teacher_id=teacher_id)
-        session_set.send(sender=Session, session=session,
-                         triggered_by=self.request.user)
+            creator=user,
+            teacher=teacher,
+            academic_year=academic_year,
+        )
+        session_set.send(sender=Session, session=session, triggered_by=user)
 
     def perform_update(self, serializer):
         session = self.get_object()

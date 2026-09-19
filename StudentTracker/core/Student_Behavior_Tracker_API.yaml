@@ -1,0 +1,2278 @@
+openapi: 3.0.3
+info:
+  title: Student Behavior Tracker API
+  version: 1.0.0
+  description: Attendance, behavior logging, and bathroom-break tracking for teachers.
+paths:
+  /api/schema/:
+    get:
+      operationId: schema_retrieve
+      description: |-
+        OpenApi3 schema for this API. Format can be selected via content negotiation.
+
+        - YAML: application/vnd.oai.openapi
+        - JSON: application/vnd.oai.openapi+json
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - json
+          - yaml
+      - in: query
+        name: lang
+        schema:
+          type: string
+          enum:
+          - af
+          - ar
+          - ar-dz
+          - ast
+          - az
+          - be
+          - bg
+          - bn
+          - br
+          - bs
+          - ca
+          - ckb
+          - cs
+          - cy
+          - da
+          - de
+          - dsb
+          - el
+          - en
+          - en-au
+          - en-gb
+          - eo
+          - es
+          - es-ar
+          - es-co
+          - es-mx
+          - es-ni
+          - es-ve
+          - et
+          - eu
+          - fa
+          - fi
+          - fr
+          - fy
+          - ga
+          - gd
+          - gl
+          - he
+          - hi
+          - hr
+          - hsb
+          - ht
+          - hu
+          - hy
+          - ia
+          - id
+          - ig
+          - io
+          - is
+          - it
+          - ja
+          - ka
+          - kab
+          - kk
+          - km
+          - kn
+          - ko
+          - ky
+          - lb
+          - lt
+          - lv
+          - mk
+          - ml
+          - mn
+          - mr
+          - ms
+          - my
+          - nb
+          - ne
+          - nl
+          - nn
+          - os
+          - pa
+          - pl
+          - pt
+          - pt-br
+          - ro
+          - ru
+          - sk
+          - sl
+          - sq
+          - sr
+          - sr-latn
+          - sv
+          - sw
+          - ta
+          - te
+          - tg
+          - th
+          - tk
+          - tr
+          - tt
+          - udm
+          - ug
+          - uk
+          - ur
+          - uz
+          - vi
+          - zh-hans
+          - zh-hant
+      tags:
+      - schema
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/vnd.oai.openapi:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/yaml:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/vnd.oai.openapi+json:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+  /api/v1/attendance/:
+    get:
+      operationId: v1_attendance_list
+      description: |-
+        Shared base for anything hanging off a session.
+
+        Admins can access all sessions.
+        Teachers can only access sessions they own.
+      tags:
+      - v1
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Attendance'
+          description: ''
+    post:
+      operationId: v1_attendance_create
+      description: |-
+        Shared base for anything hanging off a session.
+
+        Admins can access all sessions.
+        Teachers can only access sessions they own.
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Attendance'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Attendance'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Attendance'
+        required: true
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Attendance'
+          description: ''
+  /api/v1/attendance/{id}/:
+    get:
+      operationId: v1_attendance_retrieve
+      description: |-
+        Shared base for anything hanging off a session.
+
+        Admins can access all sessions.
+        Teachers can only access sessions they own.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this attendance.
+        required: true
+      tags:
+      - v1
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Attendance'
+          description: ''
+    put:
+      operationId: v1_attendance_update
+      description: |-
+        Shared base for anything hanging off a session.
+
+        Admins can access all sessions.
+        Teachers can only access sessions they own.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this attendance.
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Attendance'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Attendance'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Attendance'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Attendance'
+          description: ''
+    patch:
+      operationId: v1_attendance_partial_update
+      description: |-
+        Shared base for anything hanging off a session.
+
+        Admins can access all sessions.
+        Teachers can only access sessions they own.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this attendance.
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedAttendance'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedAttendance'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedAttendance'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Attendance'
+          description: ''
+    delete:
+      operationId: v1_attendance_destroy
+      description: |-
+        Shared base for anything hanging off a session.
+
+        Admins can access all sessions.
+        Teachers can only access sessions they own.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this attendance.
+        required: true
+      tags:
+      - v1
+      responses:
+        '204':
+          description: No response body
+  /api/v1/auth/logout/:
+    post:
+      operationId: v1_auth_logout_create
+      description: |-
+        POST /api/auth/logout/  (private)
+
+        Logs out the user by revoking the refresh token in Supabase Auth.
+      tags:
+      - v1
+      responses:
+        '200':
+          description: No response body
+  /api/v1/auth/me/:
+    get:
+      operationId: v1_auth_me_retrieve
+      description: GET /api/users/me/ — returns the profile of whoever the Bearer
+        token belongs to.
+      tags:
+      - v1
+      responses:
+        '200':
+          description: No response body
+  /api/v1/auth/signin/:
+    post:
+      operationId: v1_auth_signin_create
+      description: |-
+        POST /api/auth/signin/  (public)
+        Body: { email, password }
+
+        Signs in against Supabase Auth on the frontend's behalf and returns the
+        access token plus the caller's own profile in one response.
+      tags:
+      - v1
+      security:
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/v1/bathroom-logs/:
+    get:
+      operationId: v1_bathroom_logs_list
+      description: |-
+        Shared base for anything hanging off a session.
+
+        Admins can access all sessions.
+        Teachers can only access sessions they own.
+      tags:
+      - v1
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BathroomLog'
+          description: ''
+  /api/v1/bathroom-logs/{id}/:
+    get:
+      operationId: v1_bathroom_logs_retrieve
+      description: |-
+        Shared base for anything hanging off a session.
+
+        Admins can access all sessions.
+        Teachers can only access sessions they own.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this bathroom log.
+        required: true
+      tags:
+      - v1
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BathroomLog'
+          description: ''
+    delete:
+      operationId: v1_bathroom_logs_destroy
+      description: |-
+        Shared base for anything hanging off a session.
+
+        Admins can access all sessions.
+        Teachers can only access sessions they own.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this bathroom log.
+        required: true
+      tags:
+      - v1
+      responses:
+        '204':
+          description: No response body
+  /api/v1/bathroom-logs/{student_id}/:
+    get:
+      operationId: v1_bathroom_logs_retrieve_2
+      description: |-
+        API view to retrieve bathroom logs for a specific student.
+        by passing the student_id in the URL.
+      parameters:
+      - in: path
+        name: student_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      responses:
+        '200':
+          description: No response body
+  /api/v1/bathroom/start/:
+    post:
+      operationId: v1_bathroom_start_create
+      description: |-
+        POST { session_id, student_id } -> marks a student as 'out'.
+        If they are already out, returns 409 Conflict.
+        If they are not out, creates a new BathroomLog with duration=None and returns 201 Created.
+      tags:
+      - v1
+      responses:
+        '200':
+          description: No response body
+  /api/v1/bathroom/stop/:
+    post:
+      operationId: v1_bathroom_stop_create
+      description: POST { id } -> closes the timer, updates bathroom_log.
+      tags:
+      - v1
+      responses:
+        '200':
+          description: No response body
+  /api/v1/behavior-events/:
+    get:
+      operationId: v1_behavior_events_list
+      description: |-
+        Shared base for anything hanging off a session.
+
+        Admins can access all sessions.
+        Teachers can only access sessions they own.
+      tags:
+      - v1
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SessionStudentBehavior'
+          description: ''
+    post:
+      operationId: v1_behavior_events_create
+      description: |-
+        Shared base for anything hanging off a session.
+
+        Admins can access all sessions.
+        Teachers can only access sessions they own.
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SessionStudentBehavior'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SessionStudentBehavior'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SessionStudentBehavior'
+        required: true
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionStudentBehavior'
+          description: ''
+  /api/v1/behavior-events/{id}/:
+    get:
+      operationId: v1_behavior_events_retrieve
+      description: |-
+        Shared base for anything hanging off a session.
+
+        Admins can access all sessions.
+        Teachers can only access sessions they own.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this session student behavior.
+        required: true
+      tags:
+      - v1
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionStudentBehavior'
+          description: ''
+    put:
+      operationId: v1_behavior_events_update
+      description: |-
+        Shared base for anything hanging off a session.
+
+        Admins can access all sessions.
+        Teachers can only access sessions they own.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this session student behavior.
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SessionStudentBehavior'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SessionStudentBehavior'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SessionStudentBehavior'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionStudentBehavior'
+          description: ''
+    patch:
+      operationId: v1_behavior_events_partial_update
+      description: |-
+        Shared base for anything hanging off a session.
+
+        Admins can access all sessions.
+        Teachers can only access sessions they own.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this session student behavior.
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedSessionStudentBehavior'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedSessionStudentBehavior'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedSessionStudentBehavior'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionStudentBehavior'
+          description: ''
+    delete:
+      operationId: v1_behavior_events_destroy
+      description: |-
+        Shared base for anything hanging off a session.
+
+        Admins can access all sessions.
+        Teachers can only access sessions they own.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this session student behavior.
+        required: true
+      tags:
+      - v1
+      responses:
+        '204':
+          description: No response body
+  /api/v1/behavior-tags/:
+    get:
+      operationId: v1_behavior_tags_list
+      description: |-
+        The behavior catalog (tags + point values) — any teacher can read it,
+        only Admins can add/edit/remove entries.
+      tags:
+      - v1
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Behavior'
+          description: ''
+    post:
+      operationId: v1_behavior_tags_create
+      description: |-
+        The behavior catalog (tags + point values) — any teacher can read it,
+        only Admins can add/edit/remove entries.
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Behavior'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Behavior'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Behavior'
+        required: true
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Behavior'
+          description: ''
+  /api/v1/behavior-tags/{id}/:
+    get:
+      operationId: v1_behavior_tags_retrieve
+      description: |-
+        The behavior catalog (tags + point values) — any teacher can read it,
+        only Admins can add/edit/remove entries.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this behavior.
+        required: true
+      tags:
+      - v1
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Behavior'
+          description: ''
+    put:
+      operationId: v1_behavior_tags_update
+      description: |-
+        The behavior catalog (tags + point values) — any teacher can read it,
+        only Admins can add/edit/remove entries.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this behavior.
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Behavior'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Behavior'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Behavior'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Behavior'
+          description: ''
+    patch:
+      operationId: v1_behavior_tags_partial_update
+      description: |-
+        The behavior catalog (tags + point values) — any teacher can read it,
+        only Admins can add/edit/remove entries.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this behavior.
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedBehavior'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedBehavior'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedBehavior'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Behavior'
+          description: ''
+    delete:
+      operationId: v1_behavior_tags_destroy
+      description: |-
+        The behavior catalog (tags + point values) — any teacher can read it,
+        only Admins can add/edit/remove entries.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this behavior.
+        required: true
+      tags:
+      - v1
+      responses:
+        '204':
+          description: No response body
+  /api/v1/event-logs/:
+    get:
+      operationId: v1_event_logs_list
+      description: |-
+        GET /api/event-logs/ — Admin sees everything; a teacher sees events
+        tied to their own sessions or their own grade assignments.
+      tags:
+      - v1
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EventLog'
+          description: ''
+  /api/v1/event-logs/{id}/:
+    get:
+      operationId: v1_event_logs_retrieve
+      description: |-
+        GET /api/event-logs/ — Admin sees everything; a teacher sees events
+        tied to their own sessions or their own grade assignments.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventLog'
+          description: ''
+  /api/v1/grades/:
+    get:
+      operationId: v1_grades_list
+      tags:
+      - v1
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Grade'
+          description: ''
+    post:
+      operationId: v1_grades_create
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Grade'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Grade'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Grade'
+        required: true
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Grade'
+          description: ''
+  /api/v1/grades/{id}/:
+    get:
+      operationId: v1_grades_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Grade'
+          description: ''
+    put:
+      operationId: v1_grades_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Grade'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Grade'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Grade'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Grade'
+          description: ''
+    patch:
+      operationId: v1_grades_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedGrade'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedGrade'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedGrade'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Grade'
+          description: ''
+    delete:
+      operationId: v1_grades_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      responses:
+        '204':
+          description: No response body
+  /api/v1/sessions/:
+    get:
+      operationId: v1_sessions_list
+      tags:
+      - v1
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Session'
+          description: ''
+    post:
+      operationId: v1_sessions_create
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Session'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Session'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Session'
+        required: true
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Session'
+          description: ''
+  /api/v1/sessions/{id}/:
+    get:
+      operationId: v1_sessions_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Session'
+          description: ''
+    put:
+      operationId: v1_sessions_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Session'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Session'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Session'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Session'
+          description: ''
+    patch:
+      operationId: v1_sessions_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedSession'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedSession'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedSession'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Session'
+          description: ''
+    delete:
+      operationId: v1_sessions_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      responses:
+        '204':
+          description: No response body
+  /api/v1/sessions/{session_id}/end/:
+    post:
+      operationId: v1_sessions_end_create
+      description: |-
+        POST /api/sessions/<session_id>/end/
+
+        Marks the session finished and announces it. Force-closing open bathroom
+        logs is NOT done here anymore — that reaction lives in receivers.py and
+        fires independently. This view doesn't import BathroomLog at all.
+      parameters:
+      - in: path
+        name: session_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      responses:
+        '200':
+          description: No response body
+  /api/v1/sessions/{session_id}/report/:
+    get:
+      operationId: v1_sessions_report_retrieve
+      description: |-
+        GET /api/sessions/<session_id>/report/
+        Attendance + behavior totals + bathroom stats, one student per row.
+      parameters:
+      - in: path
+        name: session_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      responses:
+        '200':
+          description: No response body
+  /api/v1/sessions/{session_id}/start/:
+    post:
+      operationId: v1_sessions_start_create
+      description: POST /api/sessions/<session_id>/start/  — Pending -> Running
+      parameters:
+      - in: path
+        name: session_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      responses:
+        '200':
+          description: No response body
+  /api/v1/student-grades/:
+    get:
+      operationId: v1_student_grades_list
+      tags:
+      - v1
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentGrade'
+          description: ''
+    post:
+      operationId: v1_student_grades_create
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StudentGrade'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/StudentGrade'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/StudentGrade'
+        required: true
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentGrade'
+          description: ''
+  /api/v1/student-grades/{id}/:
+    get:
+      operationId: v1_student_grades_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentGrade'
+          description: ''
+    put:
+      operationId: v1_student_grades_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StudentGrade'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/StudentGrade'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/StudentGrade'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentGrade'
+          description: ''
+    patch:
+      operationId: v1_student_grades_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedStudentGrade'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedStudentGrade'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedStudentGrade'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentGrade'
+          description: ''
+    delete:
+      operationId: v1_student_grades_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      responses:
+        '204':
+          description: No response body
+  /api/v1/students/:
+    get:
+      operationId: v1_students_list
+      tags:
+      - v1
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Student'
+          description: ''
+    post:
+      operationId: v1_students_create
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Student'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Student'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Student'
+        required: true
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Student'
+          description: ''
+  /api/v1/students/{id}/:
+    get:
+      operationId: v1_students_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this student.
+        required: true
+      tags:
+      - v1
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Student'
+          description: ''
+    put:
+      operationId: v1_students_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this student.
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Student'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Student'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Student'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Student'
+          description: ''
+    patch:
+      operationId: v1_students_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this student.
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedStudent'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedStudent'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedStudent'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Student'
+          description: ''
+    delete:
+      operationId: v1_students_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this student.
+        required: true
+      tags:
+      - v1
+      responses:
+        '204':
+          description: No response body
+  /api/v1/students/{student_id}/behavior-summary/:
+    get:
+      operationId: v1_students_behavior_summary_retrieve
+      description: GET /api/students/<student_id>/behavior-summary/?date_from=&date_to=
+      parameters:
+      - in: path
+        name: student_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      responses:
+        '200':
+          description: No response body
+  /api/v1/subjects/:
+    get:
+      operationId: v1_subjects_list
+      description: |-
+        The subject catalog (e.g. Math, Science) — any authenticated user
+        can read it, only Admins can add/edit/remove entries.
+      tags:
+      - v1
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Subject'
+          description: ''
+    post:
+      operationId: v1_subjects_create
+      description: |-
+        The subject catalog (e.g. Math, Science) — any authenticated user
+        can read it, only Admins can add/edit/remove entries.
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Subject'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Subject'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Subject'
+        required: true
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subject'
+          description: ''
+  /api/v1/subjects/{id}/:
+    get:
+      operationId: v1_subjects_retrieve
+      description: |-
+        The subject catalog (e.g. Math, Science) — any authenticated user
+        can read it, only Admins can add/edit/remove entries.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this subject.
+        required: true
+      tags:
+      - v1
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subject'
+          description: ''
+    put:
+      operationId: v1_subjects_update
+      description: |-
+        The subject catalog (e.g. Math, Science) — any authenticated user
+        can read it, only Admins can add/edit/remove entries.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this subject.
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Subject'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Subject'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Subject'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subject'
+          description: ''
+    patch:
+      operationId: v1_subjects_partial_update
+      description: |-
+        The subject catalog (e.g. Math, Science) — any authenticated user
+        can read it, only Admins can add/edit/remove entries.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this subject.
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedSubject'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedSubject'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedSubject'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subject'
+          description: ''
+    delete:
+      operationId: v1_subjects_destroy
+      description: |-
+        The subject catalog (e.g. Math, Science) — any authenticated user
+        can read it, only Admins can add/edit/remove entries.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this subject.
+        required: true
+      tags:
+      - v1
+      responses:
+        '204':
+          description: No response body
+  /api/v1/teacher-grades/:
+    get:
+      operationId: v1_teacher_grades_list
+      description: 'Admin-only: assigning teachers to grades.'
+      tags:
+      - v1
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TeacherGrade'
+          description: ''
+    post:
+      operationId: v1_teacher_grades_create
+      description: 'Admin-only: assigning teachers to grades.'
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TeacherGrade'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TeacherGrade'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TeacherGrade'
+        required: true
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TeacherGrade'
+          description: ''
+  /api/v1/teacher-grades/{id}/:
+    get:
+      operationId: v1_teacher_grades_retrieve
+      description: 'Admin-only: assigning teachers to grades.'
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this teacher grade.
+        required: true
+      tags:
+      - v1
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TeacherGrade'
+          description: ''
+    put:
+      operationId: v1_teacher_grades_update
+      description: 'Admin-only: assigning teachers to grades.'
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this teacher grade.
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TeacherGrade'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TeacherGrade'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TeacherGrade'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TeacherGrade'
+          description: ''
+    patch:
+      operationId: v1_teacher_grades_partial_update
+      description: 'Admin-only: assigning teachers to grades.'
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this teacher grade.
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedTeacherGrade'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedTeacherGrade'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedTeacherGrade'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TeacherGrade'
+          description: ''
+    delete:
+      operationId: v1_teacher_grades_destroy
+      description: 'Admin-only: assigning teachers to grades.'
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this teacher grade.
+        required: true
+      tags:
+      - v1
+      responses:
+        '204':
+          description: No response body
+  /api/v1/teachers/:
+    get:
+      operationId: v1_teachers_retrieve
+      description: |-
+        GET /api/v1/teachers/  (Admin only)
+
+        Returns a list of all teachers in the system, including their roles and
+        basic profile information. Admin-only access.
+      tags:
+      - v1
+      responses:
+        '200':
+          description: No response body
+  /api/v1/users/:
+    get:
+      operationId: v1_users_retrieve
+      description: |-
+        GET /api/v1/users/  (Admin only)
+
+        Returns a list of all users in the system, including their roles and
+        basic profile information. Admin-only access.
+      tags:
+      - v1
+      responses:
+        '200':
+          description: No response body
+  /api/v1/users/create/:
+    post:
+      operationId: v1_users_create_create
+      description: |-
+        POST /api/users/create/  (Admin only)
+
+        Creates a Supabase Auth account and the matching AppUser profile row.
+        Admin-only creation is the whole point — there is no open signup path
+        anywhere in this API.
+
+        Two ways to hand the new user their credentials:
+
+        1. Default (no "password" in the body): Supabase sends the new user
+           an invite email with a link to set their own password. Nobody —
+           including the admin — ever knows or handles that password.
+
+        2. Fallback (admin supplies "password" in the body): used when email
+           delivery isn't set up/reliable yet. The admin sets it directly and
+           relays it to the user out of band; the user should change it after
+           first login.
+      tags:
+      - v1
+      responses:
+        '200':
+          description: No response body
+components:
+  schemas:
+    Attendance:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        status:
+          $ref: '#/components/schemas/AttendanceStatusEnum'
+        reason:
+          type: string
+          nullable: true
+        session:
+          type: string
+          format: uuid
+        student:
+          type: string
+          readOnly: true
+      required:
+      - session
+      - student
+    AttendanceStatusEnum:
+      enum:
+      - Present
+      - Absent
+      - Late
+      - Excused
+      - Not_Signed
+      type: string
+      description: |-
+        * `Present` - Present
+        * `Absent` - Absent
+        * `Late` - Late
+        * `Excused` - Excused
+        * `Not_Signed` - Not_Signed
+    BathroomLog:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        started_at:
+          type: string
+          format: date-time
+          readOnly: true
+        duration:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,4}(?:\.\d{0,2})?$
+          readOnly: true
+          nullable: true
+          description: minutes; null while still out
+        session:
+          type: string
+          format: uuid
+        student:
+          type: string
+          format: uuid
+        set_by:
+          type: string
+          format: uuid
+      required:
+      - duration
+      - session
+      - set_by
+      - started_at
+      - student
+    Behavior:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        type:
+          $ref: '#/components/schemas/TypeEnum'
+        tag:
+          type: string
+          maxLength: 100
+        point:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+      required:
+      - tag
+      - type
+    EventLog:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        event_type:
+          allOf:
+          - $ref: '#/components/schemas/EventTypeEnum'
+          readOnly: true
+        session:
+          type: string
+          format: uuid
+          readOnly: true
+          nullable: true
+        teacher_grade:
+          type: string
+          format: uuid
+          readOnly: true
+          nullable: true
+        triggered_by:
+          type: string
+          format: uuid
+          readOnly: true
+        metadata:
+          readOnly: true
+          nullable: true
+        occurred_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - event_type
+      - id
+      - metadata
+      - occurred_at
+      - session
+      - teacher_grade
+      - triggered_by
+    EventTypeEnum:
+      enum:
+      - session_set
+      - session_started
+      - session_ended
+      - grade_assigned
+      type: string
+      description: |-
+        * `session_set` - session_set
+        * `session_started` - session_started
+        * `session_ended` - session_ended
+        * `grade_assigned` - grade_assigned
+    Grade:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        label:
+          type: string
+          readOnly: true
+        level:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        section:
+          $ref: '#/components/schemas/SectionEnum'
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - label
+      - level
+      - section
+    PatchedAttendance:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        status:
+          $ref: '#/components/schemas/AttendanceStatusEnum'
+        reason:
+          type: string
+          nullable: true
+        session:
+          type: string
+          format: uuid
+        student:
+          type: string
+          readOnly: true
+    PatchedBehavior:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        type:
+          $ref: '#/components/schemas/TypeEnum'
+        tag:
+          type: string
+          maxLength: 100
+        point:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+    PatchedGrade:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        label:
+          type: string
+          readOnly: true
+        level:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        section:
+          $ref: '#/components/schemas/SectionEnum'
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+    PatchedSession:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+          maxLength: 256
+        status:
+          allOf:
+          - $ref: '#/components/schemas/SessionStatusEnum'
+          readOnly: true
+        start_at:
+          type: string
+          format: date-time
+        duration:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          description: minutes
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        creator:
+          type: string
+          format: uuid
+          readOnly: true
+        teacher:
+          type: string
+          format: uuid
+        grade:
+          type: string
+          format: uuid
+        subject:
+          type: string
+          format: uuid
+          nullable: true
+    PatchedSessionStudentBehavior:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        comment:
+          type: string
+          nullable: true
+        consequence:
+          type: string
+        session:
+          type: string
+          format: uuid
+        student:
+          type: string
+          format: uuid
+        behavior:
+          type: string
+          format: uuid
+    PatchedStudent:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        full_name:
+          type: string
+          readOnly: true
+        first_name:
+          type: string
+          maxLength: 100
+        middle_name:
+          type: string
+          nullable: true
+          maxLength: 100
+        last_name:
+          type: string
+          maxLength: 100
+        school_id:
+          type: string
+          maxLength: 256
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+    PatchedStudentGrade:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        student_name:
+          type: string
+          readOnly: true
+        student_id:
+          type: string
+          readOnly: true
+        grade:
+          type: string
+          readOnly: true
+        academic_year:
+          type: integer
+        enrolled_at:
+          type: string
+          format: date-time
+          readOnly: true
+    PatchedSubject:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          maxLength: 100
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+    PatchedTeacherGrade:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        teacher:
+          type: string
+          format: uuid
+        grade:
+          type: string
+          format: uuid
+        assigned_at:
+          type: string
+          format: date-time
+          readOnly: true
+    SectionEnum:
+      enum:
+      - A
+      - B
+      - C
+      - D
+      - E
+      - F
+      type: string
+      description: |-
+        * `A` - A
+        * `B` - B
+        * `C` - C
+        * `D` - D
+        * `E` - E
+        * `F` - F
+    Session:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+          maxLength: 256
+        status:
+          allOf:
+          - $ref: '#/components/schemas/SessionStatusEnum'
+          readOnly: true
+        start_at:
+          type: string
+          format: date-time
+        duration:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          description: minutes
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        creator:
+          type: string
+          format: uuid
+          readOnly: true
+        teacher:
+          type: string
+          format: uuid
+        grade:
+          type: string
+          format: uuid
+        subject:
+          type: string
+          format: uuid
+          nullable: true
+      required:
+      - created_at
+      - creator
+      - duration
+      - grade
+      - start_at
+      - status
+      - title
+    SessionStatusEnum:
+      enum:
+      - Pending
+      - Running
+      - Finished
+      type: string
+      description: |-
+        * `Pending` - Pending
+        * `Running` - Running
+        * `Finished` - Finished
+    SessionStudentBehavior:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        comment:
+          type: string
+          nullable: true
+        consequence:
+          type: string
+        session:
+          type: string
+          format: uuid
+        student:
+          type: string
+          format: uuid
+        behavior:
+          type: string
+          format: uuid
+      required:
+      - behavior
+      - session
+      - student
+    Student:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        full_name:
+          type: string
+          readOnly: true
+        first_name:
+          type: string
+          maxLength: 100
+        middle_name:
+          type: string
+          nullable: true
+          maxLength: 100
+        last_name:
+          type: string
+          maxLength: 100
+        school_id:
+          type: string
+          maxLength: 256
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - first_name
+      - full_name
+      - last_name
+      - school_id
+    StudentGrade:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        student_name:
+          type: string
+          readOnly: true
+        student_id:
+          type: string
+          readOnly: true
+        grade:
+          type: string
+          readOnly: true
+        academic_year:
+          type: integer
+        enrolled_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - academic_year
+      - enrolled_at
+      - grade
+      - id
+      - student_id
+      - student_name
+    Subject:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          maxLength: 100
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - name
+    TeacherGrade:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        teacher:
+          type: string
+          format: uuid
+        grade:
+          type: string
+          format: uuid
+        assigned_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - assigned_at
+      - grade
+      - teacher
+    TypeEnum:
+      enum:
+      - Positive
+      - Negative
+      type: string
+      description: |-
+        * `Positive` - Positive
+        * `Negative` - Negative

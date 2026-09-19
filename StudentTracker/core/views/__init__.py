@@ -10,7 +10,9 @@ from .logout import LogoutView
 from .session_end import EndSessionView
 from .session_start import StartSessionView
 from .bathroom_logs_for_student import BathroomLogsForStudentView
+from .attendance_for_session import AttendanceForSessionView
 __all__ = [
+    "AttendanceForSessionView",
     "BathroomStartView",
     "BathroomStopView",
     "SessionReportView",

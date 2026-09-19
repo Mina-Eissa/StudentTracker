@@ -29,6 +29,13 @@ class Session(models.Model):
     grade = models.ForeignKey(
         "core.Grade", on_delete=models.PROTECT, db_column="grade_id", related_name="sessions"
     )
+    academic_year = models.ForeignKey(
+        "core.AcademicYear", on_delete=models.PROTECT, db_column="academic_year_id", related_name="sessions"
+    )
+    subject = models.ForeignKey(
+        "core.Subject", on_delete=models.PROTECT, db_column="subject_id",
+        null=True, blank=True, related_name="sessions",
+    )
 
     class Meta:
         db_table = "session"
