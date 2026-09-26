@@ -3,8 +3,8 @@ import uuid
 import pytest
 from django.utils import timezone
 from rest_framework.test import APIClient
-
-from core.models import AppUser, Grade, Student, Behavior, Session, SessionStatus, BathroomLog
+from datetime import date
+from core.models import AppUser, Grade, Student, Behavior, Session, SessionStatus, BathroomLog, AcademicYear
 
 # ============================================================
 # Table bootstrap — our models are managed=False (Supabase owns the real
@@ -130,6 +130,26 @@ CREATE TABLE IF NOT EXISTS event_log (
     metadata          JSONB,
     occurred_at       TIMESTAMPTZ  NOT NULL DEFAULT now()
 );
+CREATE TABLE IF NOT EXISTS academic_year (
+        id BIGSERIAL PRIMARY KEY,
+        label TEXT NOT NULL,
+        start_date DATE NOT NULL,
+        end_date DATE NOT NULL,
+        current BOOLEAN NOT NULL DEFAULT FALSE
+    );
+CREATE TABLE IF NOT EXISTS subject (
+        id BIGSERIAL PRIMARY KEY,
+        name TEXT NOT NULL UNIQUE
+    );
+    
+ALTER TABLE session
+    ADD COLUMN IF NOT EXISTS academic_year_id BIGINT REFERENCES academic_year(id);
+ALTER TABLE session
+    ADD COLUMN IF NOT EXISTS subject_id BIGINT REFERENCES subject(id);
+ALTER TABLE teacher_grade
+    ADD COLUMN IF NOT EXISTS academic_year_id BIGINT REFERENCES academic_year(id);
+ALTER TABLE academic_year
+      ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ NOT NULL DEFAULT now();
 """
 
 
@@ -276,4 +296,18 @@ def bathroom_log_of_other_teacher(db, session_of_other_teacher, student, other_t
         session=session_of_other_teacher,
         student=student,
         set_by=other_teacher_user,
+    )
+
+
+# =======================================================
+#  For Academic Year
+# =======================================================
+
+@pytest.fixture
+def current_academic_year(db):
+    return AcademicYear.objects.create(
+        label="2026/2027",
+        start_date=date(2026, 9, 1),
+        end_date=date(2027, 6, 30),
+        current=True,
     )

@@ -1,7 +1,7 @@
 import pytest
 from django.urls import reverse
 from django.utils import timezone
-
+from datetime import timedelta
 from core.models import EventLog, Session
 
 pytestmark = pytest.mark.django_db
@@ -14,18 +14,22 @@ def test_requires_auth(api_client):
 
 def test_teacher_only_sees_own_sessions(as_teacher, as_other_teacher, session_pending):
     resp = as_teacher.get(reverse("session-list"))
-    assert len(resp.data["results"]) if "results" in resp.data else len(resp.data)
-    ids = [row["id"] for row in (resp.data["results"] if "results" in resp.data else resp.data)]
+    assert len(resp.data["results"]
+               ) if "results" in resp.data else len(resp.data)
+    ids = [row["id"] for row in (
+        resp.data["results"] if "results" in resp.data else resp.data)]
     assert str(session_pending.id) in ids
 
     resp2 = as_other_teacher.get(reverse("session-list"))
-    ids2 = [row["id"] for row in (resp2.data["results"] if "results" in resp2.data else resp2.data)]
+    ids2 = [row["id"] for row in (
+        resp2.data["results"] if "results" in resp2.data else resp2.data)]
     assert str(session_pending.id) not in ids2
 
 
 def test_admin_sees_all_sessions(as_admin, session_pending):
     resp = as_admin.get(reverse("session-list"))
-    ids = [row["id"] for row in (resp.data["results"] if "results" in resp.data else resp.data)]
+    ids = [row["id"] for row in (
+        resp.data["results"] if "results" in resp.data else resp.data)]
     assert str(session_pending.id) in ids
 
 
@@ -50,9 +54,42 @@ def test_create_fires_session_set_event(as_teacher, grade):
         "duration": 40,
         "grade": str(grade.id),
     }, format="json")
-    assert EventLog.objects.filter(event_type="session_set", session_id=resp.data["id"]).exists()
+    assert EventLog.objects.filter(
+        event_type="session_set", session_id=resp.data["id"]).exists()
 
 
 def test_teacher_cannot_update_another_teachers_session(as_other_teacher, session_pending):
-    resp = as_other_teacher.patch(reverse("session-detail", args=[session_pending.id]), {"title": "Hijacked"}, format="json")
+    resp = as_other_teacher.patch(reverse(
+        "session-detail", args=[session_pending.id]), {"title": "Hijacked"}, format="json")
     assert resp.status_code in (403, 404)
+
+
+def test_cannot_create_session_with_past_start_at(as_admin, current_academic_year, make_grade, make_subject):
+    grade = make_grade()
+    subject = make_subject()
+
+    res = as_admin.post("/api/sessions/", {
+        "title": "Math",
+        "start_at": (timezone.now() - timedelta(hours=1)).isoformat(),
+        "duration": 45,
+        "grade": grade.id,
+        "subject": subject.id,
+    }, format="json")
+
+    assert res.status_code == 400
+    assert "start_at" in res.data
+
+
+def test_can_create_session_with_future_start_at(as_admin, current_academic_year, make_grade, make_subject):
+    grade = make_grade()
+    subject = make_subject()
+
+    res = as_admin.post("/api/sessions/", {
+        "title": "Math",
+        "start_at": (timezone.now() + timedelta(hours=1)).isoformat(),
+        "duration": 45,
+        "grade": grade.id,
+        "subject": subject.id,
+    }, format="json")
+
+    assert res.status_code == 201
