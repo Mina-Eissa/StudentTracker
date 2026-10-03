@@ -1,0 +1,2 @@
+1- set notification before 5 mins from the session end time ,telling the teacher that session will end in 5 mins 
+
