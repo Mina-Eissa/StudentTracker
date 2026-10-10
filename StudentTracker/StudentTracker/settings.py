@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/6.1/ref/settings/
 
 from pathlib import Path
 import os
+from celery.schedules import crontab
 from dotenv import load_dotenv
 load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -158,3 +159,17 @@ SUPABASE_ANON_KEY = os.getenv("SUPABASE_ANON_KEY")
 SUPABASE_JWT_SECRET = os.getenv("SUPABASE_JWT_SECRET")
 SUPABASE_JWKS_URL = f"{SUPABASE_URL}/auth/v1/.well-known/jwks.json"
 SUPABASE_SERVICE_ROLE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
+
+
+# for using celery for Report,notifications and invite email 
+# settings.py
+CELERY_BROKER_URL = os.environ.get("CELERY_BROKER_URL","redis://localhost:6379/0")
+CELERY_RESULT_BACKEND = os.environ.get("CELERY_RESULT_BACKEND","redis://localhost:6379/0")
+CELERY_TASK_SERIALIZER = "json"
+CELERY_TIMEZONE = "Africa/Cairo"
+CELERY_BEAT_SCHEDULE = {
+    "nightly-behavior-summary": {
+        "task": "core.tasks.generate_daily_report",
+        "schedule": crontab(hour=20, minute=0),
+    },
+}

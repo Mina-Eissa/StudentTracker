@@ -1,0 +1,1 @@
+celery -A StudentTracker  worker -l info
